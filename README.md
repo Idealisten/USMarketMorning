@@ -1,6 +1,6 @@
 # USMarketMorning
 
-每天北京时间 06:00 自动生成中文美股收盘晨报，发送到 Gmail，并在网站上保存历史文章。
+每天北京时间 06:00 自动生成中文美股收盘晨报，发送到 Gmail，并在网站上保存历史文章和订阅邮箱。
 
 ## 内容范围
 
@@ -46,6 +46,8 @@ EMAIL_TO=prometheus.mr.cy@gmail.com
 
 Gmail 一般需要开启两步验证后创建 App Password，不能直接使用账号登录密码。
 
+网站底部提供订阅表单，访客输入邮箱后会保存到 `data/subscribers.json`。每天发送晨报时，系统会同时发送给 `.env` 的 `EMAIL_TO` 和所有订阅邮箱。
+
 ## AI 分析
 
 不配置 `OPENAI_API_KEY` 时，系统会用内置规则生成保守版分析。配置后会调用模型生成更完整的中文分析：
@@ -85,7 +87,7 @@ git pull --ff-only
 ./scripts/run.sh
 ```
 
-历史文章保存在 `data/reports`，脚本重启容器不会删除历史。
+历史文章保存在 `data/reports`，订阅邮箱保存在 `data/subscribers.json`，脚本重启容器不会删除这些数据。
 
 ## 定时任务
 

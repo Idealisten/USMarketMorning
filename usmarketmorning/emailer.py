@@ -8,6 +8,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from .config import settings
 from .models import Report
+from .storage import list_subscribers
 
 
 def _template_env() -> Environment:
@@ -25,11 +26,16 @@ def send_report_email(report: Report) -> bool:
         report.errors.append("未配置 SMTP_USER/SMTP_PASSWORD，跳过邮件发送。")
         return False
 
+    recipients = sorted({email for email in [settings.email_to, *list_subscribers()] if email})
+    if not recipients:
+        report.errors.append("没有配置收件人，跳过邮件发送。")
+        return False
+
     message = EmailMessage()
     sender = settings.email_from or settings.smtp_user
     message["Subject"] = report.title
     message["From"] = sender
-    message["To"] = settings.email_to
+    message["To"] = ", ".join(recipients)
     message.set_content(f"{report.title}\n\n请打开网站查看完整晨报。")
     message.add_alternative(render_report_email(report), subtype="html")
 

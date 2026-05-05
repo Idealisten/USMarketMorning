@@ -37,6 +37,16 @@
 
 <section id="subscribe" class="text-section">
   <h2>订阅</h2>
-  <p>配置 Gmail SMTP 后，每天北京时间 06:00 自动发送到 <strong>prometheus.mr.cy@gmail.com</strong>。</p>
+  <p>输入邮箱后，每天北京时间 06:00 自动收到最新美股晨报。</p>
+  <form class="subscribe-form" action="/subscribe" method="post">
+    <label for="subscriber-email">邮箱</label>
+    <div class="subscribe-row">
+      <input id="subscriber-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
+      <button type="submit">订阅</button>
+    </div>
+    {% if subscribe_message %}
+      <p class="subscribe-message {{ subscribe_status }}">{{ subscribe_message }}</p>
+    {% endif %}
+  </form>
 </section>
 {% endblock %}

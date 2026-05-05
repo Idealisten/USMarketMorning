@@ -165,6 +165,63 @@ h2 {
   margin-left: max(3vw, calc((100vw - 1440px) / 2));
 }
 
+.subscribe-form {
+  margin-top: 30px;
+  max-width: 760px;
+}
+
+.subscribe-form label {
+  display: block;
+  color: #4e4945;
+  font-size: 16px;
+  font-weight: 750;
+  margin-bottom: 12px;
+}
+
+.subscribe-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+}
+
+.subscribe-row input,
+.subscribe-row button {
+  min-height: 58px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 18px;
+}
+
+.subscribe-row input {
+  width: 100%;
+  background: var(--panel);
+  color: var(--ink);
+  padding: 0 18px;
+}
+
+.subscribe-row button {
+  background: var(--ink);
+  color: var(--panel);
+  cursor: pointer;
+  font-weight: 800;
+  padding: 0 28px;
+}
+
+.subscribe-message {
+  margin: 14px 0 0;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.subscribe-message.ok {
+  color: var(--up);
+}
+
+.subscribe-message.error {
+  color: var(--down);
+}
+
 .report {
   padding-top: 56px;
 }
@@ -308,6 +365,10 @@ code {
 
   .article-grid,
   .mover-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .subscribe-row {
     grid-template-columns: 1fr;
   }
 

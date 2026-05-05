@@ -5,12 +5,12 @@ import socket
 import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-from flask import Flask, abort, render_template
+from flask import Flask, abort, redirect, render_template, request, url_for
 
 from .config import settings
 from .emailer import send_report_email
 from .report import generate_report
-from .storage import latest_report, list_reports, load_report
+from .storage import add_subscriber, latest_report, list_reports, load_report
 
 
 def create_app() -> Flask:
@@ -19,7 +19,19 @@ def create_app() -> Flask:
     @app.route("/")
     def home():
         reports = list_reports()
-        return render_template("index.html", latest=reports[0] if reports else None, reports=reports)
+        return render_template(
+            "index.html",
+            latest=reports[0] if reports else None,
+            reports=reports,
+            subscribe_status=request.args.get("subscribe"),
+            subscribe_message=request.args.get("message", ""),
+        )
+
+    @app.post("/subscribe")
+    def subscribe():
+        ok, message = add_subscriber(request.form.get("email", ""))
+        status = "ok" if ok else "error"
+        return redirect(url_for("home", subscribe=status, message=message) + "#subscribe")
 
     @app.route("/articles/<slug>")
     def article(slug: str):

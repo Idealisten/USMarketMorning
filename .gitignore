@@ -5,4 +5,5 @@ __pycache__/
 .DS_Store
 data/reports/*.json
 data/*.png
+data/subscribers.json
 data/run.lock
