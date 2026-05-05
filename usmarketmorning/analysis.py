@@ -52,7 +52,7 @@ def infer_stock_reason(stock: StockMove, facts: list[NewsItem]) -> str:
     if related:
         return f"相关新闻：{related[0][:100]}"
     if any(word in text for word in ["ai", "nvidia", "semiconductor", "chip"]):
-        return "受科技/AI与半导体主线情绪影响，需结合公司公告进一步确认。"
+        return "受科技/AI与半导体主线情绪影响。"
     if any(word in text for word in ["yield", "fed", "rate", "inflation"]):
         return "受利率与估值环境变化影响，成长/周期股弹性可能被放大。"
     return "暂无明确公司级新闻，可能来自板块轮动、财报预期或技术性交易。"

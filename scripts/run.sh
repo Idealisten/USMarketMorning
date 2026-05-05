@@ -6,13 +6,14 @@ CONTAINER_NAME="${CONTAINER_NAME:-us-market-morning}"
 START_PORT="${PORT:-8000}"
 PORT_TO_USE="$START_PORT"
 
+docker rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
+
 while lsof -iTCP:"$PORT_TO_USE" -sTCP:LISTEN >/dev/null 2>&1; do
   PORT_TO_USE=$((PORT_TO_USE + 1))
 done
 
 mkdir -p data/reports
 docker build -t "$IMAGE_NAME" .
-docker rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
 docker run -d \
   --name "$CONTAINER_NAME" \
   --restart unless-stopped \
