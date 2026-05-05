@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}美股晨报{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>美股收盘，<br>北京时间晨读</h1>
+  <p>每天早晨六点整理全球指数、商品、美债、科技与宏观事件，并保存为可回看的中文市场文章。</p>
+</section>
+
+<section class="section">
+  <div class="section-heading">
+    <h2>精选文章</h2>
+    {% if latest %}<a class="text-link" href="/articles/{{ latest.slug }}">阅读最新</a>{% endif %}
+  </div>
+  {% if reports %}
+    <div class="article-grid">
+      {% for report in reports %}
+      <article class="article-card">
+        <time>{{ report.date }}</time>
+        <h3>{{ report.title }}</h3>
+        <p>{{ report.analysis[:118] }}{% if report.analysis|length > 118 %}...{% endif %}</p>
+        <a href="/articles/{{ report.slug }}">阅读全文</a>
+      </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <h3>还没有晨报</h3>
+      <p>运行 <code>python -m usmarketmorning.cli generate --send</code> 后，第一篇文章会出现在这里。</p>
+    </div>
+  {% endif %}
+</section>
+
+<section id="about" class="text-section">
+  <h2>关于</h2>
+  <p>这是一套私人美股晨报系统：自动抓取市场数据、过去24小时新闻事实、AI/规则分析，并把历史文章保存在本地数据目录中。</p>
+</section>
+
+<section id="subscribe" class="text-section">
+  <h2>订阅</h2>
+  <p>配置 Gmail SMTP 后，每天北京时间 06:00 自动发送到 <strong>prometheus.mr.cy@gmail.com</strong>。</p>
+</section>
+{% endblock %}

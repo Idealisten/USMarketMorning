@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}{{ report.title }}{% endblock %}
+{% block content %}
+<article class="report">
+  <a class="back-link" href="/">返回文章</a>
+  <header class="report-header">
+    <time>{{ report.date }}</time>
+    <h1>{{ report.title.replace(" 美股", "<br>美股")|safe }}</h1>
+    <p>生成时间：{{ report.generated_at }}</p>
+  </header>
+
+  <section class="report-section">
+    <h2>一、数据罗列</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>品类</th>
+            <th>名称</th>
+            <th>代码</th>
+            <th>最新</th>
+            <th>涨跌幅</th>
+            <th>原因</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in report.market_moves %}
+          <tr>
+            <td>{{ item.category }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.symbol }}</td>
+            <td>{% if item.price is not none %}{{ "%.2f"|format(item.price) }}{% else %}暂无{% endif %}</td>
+            <td class="{% if item.change_pct and item.change_pct > 0 %}up{% elif item.change_pct and item.change_pct < 0 %}down{% endif %}">
+              {% if item.change_pct is not none %}{{ "%+.2f"|format(item.change_pct) }}%{% else %}暂无{% endif %}
+            </td>
+            <td>{{ item.reason }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  {% for title, rows in [
+    ("纳斯达克100 涨幅前10", report.nasdaq_gainers),
+    ("纳斯达克100 跌幅前10", report.nasdaq_losers),
+    ("标普500 涨幅前10", report.sp500_gainers),
+    ("标普500 跌幅前10", report.sp500_losers)
+  ] %}
+  <section class="report-section compact">
+    <h2>{{ title }}</h2>
+    <div class="mover-grid">
+      {% for stock in rows %}
+      <div class="mover">
+        <div>
+          <strong>{{ stock.name }}</strong>
+          <span>{{ stock.symbol }}</span>
+        </div>
+        <b class="{% if stock.change_pct and stock.change_pct > 0 %}up{% else %}down{% endif %}">
+          {% if stock.change_pct is not none %}{{ "%+.2f"|format(stock.change_pct) }}%{% else %}暂无{% endif %}
+        </b>
+        <p>{{ stock.reason }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+
+  <section class="report-section">
+    <h2>二、过去24小时事实</h2>
+    <div class="fact-list">
+      {% for item in report.facts %}
+      <a class="fact" href="{{ item.url }}" target="_blank" rel="noreferrer">
+        <span>{{ item.category }}</span>
+        <strong>{{ item.title }}</strong>
+        <small>{{ item.source }}</small>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="report-section prose">
+    <h2>三、分析总结</h2>
+    <p>{{ report.analysis }}</p>
+    {% if report.individual_stock_notes %}
+      <h3>大幅波动个股</h3>
+      <ul>
+        {% for note in report.individual_stock_notes %}
+        <li>{{ note }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </section>
+
+  {% if report.errors %}
+  <section class="report-section warnings">
+    <h2>数据提示</h2>
+    <ul>
+      {% for error in report.errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+</article>
+{% endblock %}
