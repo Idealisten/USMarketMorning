@@ -59,6 +59,20 @@ OPENAI_MODEL=gpt-4o-mini
 
 ## Docker 部署
 
+服务器需要先安装 Git 和 Docker，并确保 Docker daemon 正在运行。
+
+首次部署：
+
+```bash
+git clone https://github.com/Idealisten/USMarketMorning.git
+cd USMarketMorning
+cp .env.example .env
+vim .env
+./scripts/run.sh
+```
+
+如果已经在当前目录拿到了代码，也可以直接：
+
 ```bash
 cp .env.example .env
 vim .env
@@ -72,9 +86,30 @@ vim .env
 - 挂载 `./data` 到容器内，确保历史文章持久保存；
 - 使用 `--restart unless-stopped` 保持服务运行。
 
-## 服务器端更新
+常用 Docker 管理命令：
 
-首次部署后，后续更新代码：
+```bash
+docker ps --filter name=us-market-morning
+docker logs -f us-market-morning
+docker rm -f us-market-morning
+```
+
+## 更新部署
+
+### 本地更新后推送到 GitHub
+
+在本地修改代码后：
+
+```bash
+git status
+git add .
+git commit -m "描述本次修改"
+git push
+```
+
+### 服务器端更新代码
+
+服务器上进入项目目录后执行：
 
 ```bash
 ./scripts/update_server.sh
@@ -86,6 +121,18 @@ vim .env
 git pull --ff-only
 ./scripts/run.sh
 ```
+
+### Docker 方式更新
+
+Docker 部署时也使用同一个更新脚本：
+
+```bash
+cd /path/to/USMarketMorning
+git pull --ff-only
+./scripts/run.sh
+```
+
+`scripts/run.sh` 会删除旧的 `us-market-morning` 容器，重新构建镜像，再启动新容器。如果 `8000` 被其他程序占用，会自动改用 `8001`、`8002` 等后续端口。
 
 历史文章保存在 `data/reports`，订阅邮箱保存在 `data/subscribers.json`，脚本重启容器不会删除这些数据。
 
