@@ -327,7 +327,8 @@ th {
 
 .prose p,
 .prose li,
-.warnings li {
+.warnings li,
+.trump-summary {
   font-size: 20px;
   line-height: 1.85;
 }

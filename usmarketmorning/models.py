@@ -49,6 +49,7 @@ class Report:
     sp500_gainers: list[StockMove] = field(default_factory=list)
     sp500_losers: list[StockMove] = field(default_factory=list)
     facts: list[NewsItem] = field(default_factory=list)
+    trump_summary: str = ""
     analysis: str = ""
     individual_stock_notes: list[str] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)

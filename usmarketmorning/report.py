@@ -4,7 +4,7 @@ from datetime import datetime
 
 import pytz
 
-from .analysis import ai_analysis, heuristic_analysis, infer_market_reason, infer_stock_reason
+from .analysis import ai_analysis, heuristic_analysis, infer_market_reason, infer_stock_reason, summarize_trump_comments
 from .config import settings
 from .market import fetch_market_moves, fetch_nasdaq100_constituents, fetch_sp500_constituents, fetch_stock_movers
 from .models import Report, StockMove
@@ -25,6 +25,7 @@ def generate_report() -> Report:
 
     facts, news_errors = fetch_news()
     report.facts = facts
+    report.trump_summary = summarize_trump_comments(facts)
     report.errors.extend(news_errors)
 
     try:

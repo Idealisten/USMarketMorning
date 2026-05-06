@@ -17,12 +17,26 @@
         </tr>
         {% endfor %}
       </table>
-      <h2>二、过去24小时事实</h2>
-      <ul>
-        {% for item in report.facts[:18] %}
-        <li><strong>[{{ item.category }}]</strong> <a href="{{ item.url }}">{{ item.title }}</a> - {{ item.source }}</li>
+      
+      {% for title, rows in [
+        ("纳斯达克100 涨幅前10", report.nasdaq_gainers),
+        ("标普500 涨幅前10", report.sp500_gainers)
+      ] %}
+      <h2>{{ title }}</h2>
+      <table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse;background:#fffaf4;margin-bottom:20px;">
+        <tr style="text-align:left;border-bottom:1px solid #e3ddd5;"><th>代码</th><th>名称</th><th>涨跌幅</th><th>原因</th></tr>
+        {% for stock in rows %}
+        <tr style="border-bottom:1px solid #e9e2da;">
+          <td>{{ stock.symbol }}</td>
+          <td>{{ stock.name }}</td>
+          <td style="color:#d32f2f;font-weight:bold;">{% if stock.change_pct is not none %}{{ "%+.2f"|format(stock.change_pct) }}%{% else %}暂无{% endif %}</td>
+          <td style="font-size:0.9em;color:#555;">{{ stock.reason }}</td>
+        </tr>
         {% endfor %}
-      </ul>
+      </table>
+      {% endfor %}
+      <h2>二、特朗普近期言论</h2>
+      <p style="line-height:1.8;">{{ report.trump_summary }}</p>
       <h2>三、分析总结</h2>
       <p style="line-height:1.8;">{{ report.analysis }}</p>
       {% if report.individual_stock_notes %}

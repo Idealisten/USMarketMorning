@@ -43,9 +43,7 @@
 
   {% for title, rows in [
     ("纳斯达克100 涨幅前10", report.nasdaq_gainers),
-    ("纳斯达克100 跌幅前10", report.nasdaq_losers),
-    ("标普500 涨幅前10", report.sp500_gainers),
-    ("标普500 跌幅前10", report.sp500_losers)
+    ("标普500 涨幅前10", report.sp500_gainers)
   ] %}
   <section class="report-section compact">
     <h2>{{ title }}</h2>
@@ -67,16 +65,8 @@
   {% endfor %}
 
   <section class="report-section">
-    <h2>二、过去24小时事实</h2>
-    <div class="fact-list">
-      {% for item in report.facts %}
-      <a class="fact" href="{{ item.url }}" target="_blank" rel="noreferrer">
-        <span>{{ item.category }}</span>
-        <strong>{{ item.title }}</strong>
-        <small>{{ item.source }}</small>
-      </a>
-      {% endfor %}
-    </div>
+    <h2>二、特朗普近期言论</h2>
+    <p class="trump-summary">{{ report.trump_summary }}</p>
   </section>
 
   <section class="report-section prose">

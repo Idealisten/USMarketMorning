@@ -58,6 +58,45 @@ def infer_stock_reason(stock: StockMove, facts: list[NewsItem]) -> str:
     return "暂无明确公司级新闻，可能来自板块轮动、财报预期或技术性交易。"
 
 
+def _field(item: NewsItem | dict, name: str) -> str:
+    if isinstance(item, dict):
+        return str(item.get(name, "") or "")
+    return str(getattr(item, name, "") or "")
+
+
+def summarize_trump_comments(facts: list[NewsItem] | list[dict]) -> str:
+    related = [
+        item
+        for item in facts
+        if _field(item, "category") == "特朗普言论"
+        or "trump" in _field(item, "title").lower()
+        or "truth social" in _field(item, "title").lower()
+    ]
+    if not related:
+        return "过去24小时公开新闻源中没有抓取到明确的特朗普新发言。若需要更完整覆盖，可在环境变量 TRUMP_SOURCE_URL 中配置稳定的 X 或 Truth Social RSS 源。"
+
+    titles = [_field(item, "title") for item in related[:8]]
+    text = " ".join(titles).lower()
+    themes: list[str] = []
+    if any(word in text for word in ["fed", "federal reserve", "powell", "rate", "inflation"]):
+        themes.append("美联储、利率或通胀")
+    if any(word in text for word in ["tariff", "trade", "china", "import", "export"]):
+        themes.append("关税与贸易政策")
+    if any(word in text for word in ["oil", "energy", "iran", "middle east", "war", "ceasefire"]):
+        themes.append("能源与地缘风险")
+    if any(word in text for word in ["ai", "chip", "semiconductor", "tech", "nvidia"]):
+        themes.append("科技与半导体")
+    if not themes:
+        themes.append("美国政策与市场预期")
+
+    joined_titles = "；".join(titles[:3])
+    return (
+        f"过去24小时抓取到的特朗普相关消息主要围绕{'、'.join(themes)}。"
+        f"核心线索包括：{joined_titles}。"
+        "这些表态或相关政治动向通常会通过利率预期、贸易风险、能源价格和风险偏好传导到股市。"
+    )
+
+
 def heuristic_analysis(
     market_moves: list[MarketMove],
     facts: list[NewsItem],

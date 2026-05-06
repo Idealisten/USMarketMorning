@@ -10,7 +10,14 @@ from flask import Flask, abort, redirect, render_template, request, url_for
 from .config import settings
 from .emailer import send_report_email
 from .report import generate_report
+from .analysis import summarize_trump_comments
 from .storage import add_subscriber, latest_report, list_reports, load_report
+
+
+def with_computed_fields(report: dict) -> dict:
+    if not report.get("trump_summary"):
+        report["trump_summary"] = summarize_trump_comments(report.get("facts", []))
+    return report
 
 
 def create_app() -> Flask:
@@ -18,7 +25,7 @@ def create_app() -> Flask:
 
     @app.route("/")
     def home():
-        reports = list_reports()
+        reports = [with_computed_fields(report) for report in list_reports()]
         return render_template(
             "index.html",
             latest=reports[0] if reports else None,
@@ -36,7 +43,7 @@ def create_app() -> Flask:
     @app.route("/articles/<slug>")
     def article(slug: str):
         try:
-            report = load_report(slug)
+            report = with_computed_fields(load_report(slug))
         except FileNotFoundError:
             abort(404)
         return render_template("article.html", report=report, reports=list_reports())
